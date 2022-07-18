@@ -4,6 +4,7 @@ public class MapGenerator : MonoBehaviour
 {
     public enum DrawMode
     {
+        TextureMap,
         NoiseMap,
         ColorMap
     }
@@ -13,6 +14,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private int mapWidth = 10;
     [SerializeField] private int mapHeight = 10;
     [SerializeField] private float mapDepth = 10;
+    [SerializeField] private int cellSize = 10;
     [SerializeField] private int octaves;
     [Range(0,1), SerializeField] private float persistence;
     [SerializeField] private float lacunarity;
@@ -22,14 +24,22 @@ public class MapGenerator : MonoBehaviour
     [SerializeField, Space] private bool autoUpdate;
     [Header("Map Objects")]
     [SerializeField] private MapDisplay mapDisplay;
-
+    [SerializeField] private WorldGrid worldGrid;
+    [Header("Map Data")]
+    [SerializeField] private CellObject[] worldObjects;
+    [SerializeField] private GridCell[,] grid;
+    [SerializeField] private CellObject[] cellPrefabs;
     [SerializeField] private TerrainType[] regions;
     public bool AutoUpdate => autoUpdate;
-    
+    public float Offset => cellSize / 2;
+
     public void GenerateMap()
     {
+        DestroyOldMap();
+        
         float[,] noiseMap = Noise.GenerateNoiseMap(mapWidth, mapHeight, mapSeed, mapDepth, octaves, persistence, lacunarity, offset);
-        Color[] colorMap = new Color[mapWidth * mapHeight];
+        worldObjects = new CellObject[mapWidth * mapHeight];
+        grid = new GridCell[mapWidth, mapHeight];
         
         for (int y = 0; y < mapHeight; y++)
         {
@@ -41,15 +51,27 @@ public class MapGenerator : MonoBehaviour
                 {
                     if (currentHeight <= regions[i].height)
                     {
-                        colorMap[y * mapWidth + x] = regions[i].color;
+                        var pos = GetGridCellWorldPosition(x, y);
+                        worldObjects[x + y] = Instantiate(cellPrefabs[0], transform);
+                        var cell = worldObjects[x + y];
+                        cell.MeshRenderer.material = regions[i].material;
+                        cell.transform.position = new Vector3(pos.x + Offset, -0.1f, pos.z + Offset);
+                        grid[x, y] = new GridCell(new Vector2Int(x, y), pos);
                         break;
                     }
                 }
             }
         }
+    }
+
+    public void DestroyOldMap()
+    {
+        foreach (Transform t in transform)
+        {
+            Destroy(t.gameObject);
+        }
         
-        if (drawMode == DrawMode.NoiseMap) mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap));
-        else if (drawMode == DrawMode.ColorMap) mapDisplay.DrawTexture(TextureGenerator.TextureFromColorMap(colorMap, mapWidth, mapHeight));
+        Debug.Log("Deleted old map...");
     }
 
     public void OnValidate()
@@ -59,6 +81,12 @@ public class MapGenerator : MonoBehaviour
         if (lacunarity < 1) lacunarity = 1;
         if (octaves < 0) octaves = 0;
     }
+    
+    private Vector3Int GetGridCellWorldPosition(int x, int y)
+    {
+        Vector3 vec = new Vector3(x, 0, y) * cellSize + transform.position;
+        return Vector3Int.FloorToInt(vec);
+    }
 }
 
 [System.Serializable]
@@ -67,5 +95,5 @@ public struct TerrainType
     public string name;
     public float height;
     public Color color;
-    
+    public Material material;
 }
