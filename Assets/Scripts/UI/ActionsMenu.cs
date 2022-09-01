@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
 
 public class ActionsMenu : Menu
 {
@@ -38,31 +39,39 @@ public class ActionsMenu : Menu
 		}
 	}
 
-	private void GetActionMenuSize(GridBlock actionBlock)
+	private void GetActionMenuSize(GridBlock clickedBlock)
 	{
 		foreach (Transform btn in actionButtonsParent) Destroy(btn.gameObject);
 
 		foreach (var action in DiceDungeonUtils.GetEnumValues<BlockActionTypes>())
-			if (actionBlock.BlockActions.Contains(action))
+		{
+			if (!clickedBlock.BlockActions.Contains(action)) continue;
+			
+			var newButton = Instantiate(actionButtonPrefab, actionButtonsParent);
+			
+			switch (action)
 			{
-				var newButton = Instantiate(actionButtonPrefab, actionButtonsParent);
-
-				switch (action)
+				case BlockActionTypes.Travel:
 				{
-					case BlockActionTypes.Travel:
-					{
-						newButton.GetComponentInChildren<TMP_Text>().text = "Travel";
-						newButton.onClick.AddListener(OnTravelClick);
-						break;
-					}
-					case BlockActionTypes.Examine:
-					{
-						newButton.GetComponentInChildren<TMP_Text>().text = "Examine";
-						newButton.onClick.AddListener(() => OnExamineClick(actionBlock));
-						break;
-					}
+					newButton.GetComponentInChildren<TMP_Text>().text = "Travel";
+					newButton.onClick.AddListener(OnTravelClick);
+					break;
+				}
+				case BlockActionTypes.Examine:
+				{
+					newButton.GetComponentInChildren<TMP_Text>().text = "Examine";
+					newButton.onClick.AddListener(() => OnExamineClick(clickedBlock));
+					break;
 				}
 			}
+		}
+		
+		if (clickedBlock.BlockItem != null)
+		{
+			var newButton = Instantiate(actionButtonPrefab, actionButtonsParent);
+			newButton.GetComponentInChildren<TMP_Text>().text = "Pick Up";
+			newButton.onClick.AddListener(() => OnPickUpClick(clickedBlock));
+		}
 	}
 
 	private void OnTravelClick()
@@ -71,12 +80,18 @@ public class ActionsMenu : Menu
 		GridManager.Instance.StartPathfinding();
 	}
 
-	private void OnExamineClick(GridBlock gridBlock)
+	private void OnExamineClick(GridBlock clickedBlock)
 	{
 		ShowHideMenu(false, null);
-		Debug.Log($"Pretty interesting block...  {gridBlock.GridPosition}");
+		Debug.Log($"Pretty interesting block...  {clickedBlock.GridPosition}");
 	}
 
+	private void OnPickUpClick(GridBlock clickedBlock)
+	{
+		GridManager.Instance.PickUpItem(clickedBlock);
+		ShowHideMenu(false, null);
+	}
+	
 	public override void ShowHideMenu(bool state, object obj)
 	{
 		base.ShowHideMenu(state, obj);
@@ -90,5 +105,4 @@ public enum BlockActionTypes
 {
 	Travel,
 	Examine,
-	PickUp
 }

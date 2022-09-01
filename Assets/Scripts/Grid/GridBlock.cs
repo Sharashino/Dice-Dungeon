@@ -9,11 +9,13 @@ public class GridBlock : MonoBehaviour
 
 	[SerializeField] private Vector2Int gridPosition;
 	[SerializeField] private Vector3 worldPosition;
-	[SerializeField] private BlockType blockType;
-	[SerializeField] private List<BlockActionTypes> blockActions;
 
-	private Color offColor = new Color(0, 0, 0, 0);
-	private Color onColor = new Color(1, 1, 1, 1);
+	[SerializeField] private List<BlockActionTypes> blockActions;
+	[SerializeField] private BlockType blockType;
+	[SerializeField] private BlockItem blockItem;
+
+	private Color offColor = new(0, 0, 0, 0);
+	private Color onColor = new(1, 1, 1, 1);
 
 	#region A*
 
@@ -31,6 +33,8 @@ public class GridBlock : MonoBehaviour
 
 	public List<BlockActionTypes> BlockActions { get => blockActions; set => blockActions = value; }
 	public Vector3 WorldPosition { get => worldPosition; set => worldPosition = value; }
+
+	public BlockItem BlockItem { get => blockItem; set => blockItem = value; }
 
 
 	public void ShowHideBlockOverlay(bool state)
@@ -54,6 +58,12 @@ public class GridBlock : MonoBehaviour
 			ShowHideBlockArrow(true);
 			arrowRenderer.sprite = GridManager.Instance.BlockArrows[(int)direction];
 		}
+	}
+
+	public void RemoveBlockItem()
+	{
+		Destroy(blockItem.gameObject);
+		blockItem = null;
 	}
 }
 

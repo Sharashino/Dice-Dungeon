@@ -14,7 +14,7 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Transform itemsParent;
 	[SerializeField] private Transform entitiesParent;
 	
-	[SerializeField] private PlayerManager player;
+	[SerializeField] private Player player;
 	[SerializeField] private List<GridBlock> map = new();
 	[SerializeField] private Sprite[] blockArrows;
 
@@ -28,7 +28,7 @@ public class GridManager : MonoBehaviour
 	public GridBlock HoveredBlock { get => hoveredBlock; set => hoveredBlock = value; }
 	public Sprite[] BlockArrows => blockArrows;
 	public bool IsPathfinding => isPathfinding;
-	public PlayerManager Player => player;
+	public Player Player => player;
 	
 	private void Awake()
 	{
@@ -58,6 +58,19 @@ public class GridManager : MonoBehaviour
 			gridBlock.ShowHideBlockOverlay(false);
 			gridBlock.ShowHideBlockArrow(false);
 			map.Add(gridBlock);
+
+			RandomItemSpawn(gridBlock);
+		}
+	}
+
+	private void RandomItemSpawn(GridBlock gridBlock)
+	{
+		var random = Random.Range(0, 101);
+		if (random > 75)
+		{
+			var item = Instantiate(InventoryManager.Instance.BlockItems.First(), itemsParent);
+			item.transform.localPosition = new Vector3(gridBlock.WorldPosition.x, 1.75f, gridBlock.WorldPosition.z);
+			gridBlock.BlockItem = item;
 		}
 	}
 
@@ -76,7 +89,7 @@ public class GridManager : MonoBehaviour
 		ShowHideTravelRange(false);
 
 		blocksInRange =
-			PathFinder.GetBlocksInRange(PlayerManager.Instance.CurrentBlock, PlayerManager.Instance.TravelRange);
+			PathFinder.GetBlocksInRange(Player.Instance.CurrentBlock, Player.Instance.TravelRange);
 
 		ShowHideTravelRange(true);
 
@@ -105,13 +118,13 @@ public class GridManager : MonoBehaviour
 	{
 		while (isPathfinding)
 		{
-			path = PathFinder.FindPath(PlayerManager.Instance.CurrentBlock, hoveredBlock, blocksInRange);
+			path = PathFinder.FindPath(Player.Instance.CurrentBlock, hoveredBlock, blocksInRange);
 
 			SetBlockArrows(Directions.None);
 
 			for (var i = 0; i < path.Count; i++)
 			{
-				var prev = i > 0 ? path[i - 1] : PlayerManager.Instance.CurrentBlock;
+				var prev = i > 0 ? path[i - 1] : Player.Instance.CurrentBlock;
 				var future = i < path.Count - 1 ? path[i + 1] : null;
 				var arrowDir = PathTranslator.TranslateDirection(prev, path[i], future);
 				path[i].SetBlockArrow(arrowDir);
@@ -152,5 +165,21 @@ public class GridManager : MonoBehaviour
 	{
 		EndPathfinding();
 		player.StartCoroutine(player.MovePlayerCoroutine(path));
+	}
+
+	public void PickUpItem(GridBlock clickedBlock)
+	{
+		// if not in range act as travel button
+		if (player.CurrentBlock != clickedBlock)
+		{
+			blocksInRange = GetTravelRange();
+			path = PathFinder.FindPath(Player.Instance.CurrentBlock, clickedBlock, blocksInRange);
+			Debug.Log(path.Count);
+			MovePlayer();
+		}
+	
+		// pick up item and remove it from map
+		player.PickUpItem(clickedBlock.BlockItem);
+		clickedBlock.RemoveBlockItem();
 	}
 }
