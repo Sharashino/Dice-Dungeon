@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -30,14 +31,16 @@ public class PlayerManager : MonoBehaviour
 
 	public IEnumerator MovePlayerCoroutine(List<GridBlock> path)
 	{
-		while (path.Count > 0)
+		var lastPath = path.Last();
+
+		while (true)
 		{
-			var step = playerSpeed * Time.deltaTime;
+			var step = playerSpeed * Time.fixedDeltaTime;
 
 			var playerVec = new Vector3(player.position.x, 1.5f, player.position.z);
-			var targetVec = new Vector3(path[0].transform.position.x, 1.5f, path[0].transform.position.z);
+			var targetVec = new Vector3(path[0].WorldPosition.x, 1.5f, path[0].WorldPosition.z);
 
-			player.position = Vector3.MoveTowards(playerVec, targetVec, step);
+			transform.position = Vector3.MoveTowards(playerVec, targetVec, step);
 
 			if (Vector3.Distance(player.position, targetVec) < 0.001f)
 			{
@@ -46,8 +49,12 @@ public class PlayerManager : MonoBehaviour
 				path.RemoveAt(0);
 			}
 
-			if (path.Count == 0) Debug.Log("Done walking");
 			yield return null;
 		}
+
+		
+		transform.position = new Vector3(lastPath.WorldPosition.x, 1.5f, lastPath.WorldPosition.z);
+		Debug.Log(player.position);
+		Debug.Log(new Vector3(lastPath.WorldPosition.x, 1.5f, lastPath.WorldPosition.z));
 	}
 }

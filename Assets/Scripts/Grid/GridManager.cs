@@ -11,6 +11,9 @@ public class GridManager : MonoBehaviour
 	[Header("Game Map")] [SerializeField] private Vector2Int mapSize;
 	[SerializeField] private GridBlock gridBlockPrefab;
 	[SerializeField] private Transform gridParent;
+	[SerializeField] private Transform itemsParent;
+	[SerializeField] private Transform entitiesParent;
+	
 	[SerializeField] private PlayerManager player;
 	[SerializeField] private List<GridBlock> map = new List<GridBlock>();
 	[SerializeField] private Sprite[] blockArrows;
@@ -60,7 +63,9 @@ public class GridManager : MonoBehaviour
 	private void SpawnPlayer()
 	{
 		var randBlock = map[Random.Range(0, map.Count)];
-		var newPlayer = Instantiate(player, randBlock.transform);
+		var newPlayer = Instantiate(player, entitiesParent);
+		
+		newPlayer.transform.localPosition = new Vector3(randBlock.WorldPosition.x, 1.5f, randBlock.WorldPosition.z);
 		newPlayer.CurrentBlock = randBlock;
 	}
 
@@ -148,7 +153,9 @@ public class GridManager : MonoBehaviour
 
 	public void MovePlayer()
 	{
-		if (path != null)
-			StartCoroutine(player.MovePlayerCoroutine(path));
+		if (path.Count > 0)
+		{
+			player.transform.position = path.Last().WorldPosition;
+		}
 	}
 }
