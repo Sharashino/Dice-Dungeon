@@ -1,18 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 public class MouseCursor : MonoBehaviour
 {
 	[SerializeField] private Camera mainCamera;
-	[SerializeField] private List<GridBlock> path;
-	private List<GridBlock> blocksInRange = new List<GridBlock>();
 	private GridBlock hoveredBlock;
-	private GridBlock endBlock;
-	private bool isPathfinding = false;
-	private bool isMoving;
 
-	public GridBlock HoveredBlock {
+	private GridBlock HoveredBlock {
 		get => GridManager.Instance.HoveredBlock;
 		set => GridManager.Instance.HoveredBlock = value;
 	}
