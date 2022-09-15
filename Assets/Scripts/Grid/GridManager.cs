@@ -17,7 +17,6 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Player player;
 	[SerializeField] private List<GridBlock> map = new();
 	[SerializeField] private Sprite[] blockArrows;
-
 	private List<GridBlock> blocksInRange = new();
 	private List<GridBlock> path = new();
 	private GridBlock hoveredBlock;
