@@ -1,18 +1,23 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class Menu : MonoBehaviour
 {
 	[SerializeField] protected CanvasGroup menuCanvasGroup;
-	public bool IsShown => menuCanvasGroup.alpha > 0;
+	public bool IsShown => menuCanvasGroup.IsShown();
 
-	private void Awake()
+	protected virtual void Awake()
 	{
-		menuCanvasGroup = GetComponent<CanvasGroup>();
+		if(menuCanvasGroup == null) menuCanvasGroup = GetComponent<CanvasGroup>();
 	}
 
 	public virtual void ShowHideMenu(bool state, object obj)
+	{
+		if (state) menuCanvasGroup.Enable();
+		else menuCanvasGroup.Disable();
+	}
+	
+	public virtual void ShowHideMenu(bool state)
 	{
 		if (state) menuCanvasGroup.Enable();
 		else menuCanvasGroup.Disable();

@@ -106,18 +106,18 @@ MonoBehaviour:
     items: []
     inventorySize: 15
   health:
-    statName: 
-    baseValue: 0
+    statName: Health
+    baseValue: 100
+    modifiers: 
+  mana:
+    statName: Mana
+    baseValue: 100
     modifiers: 
   armor:
-    statName: 
+    statName: Armor
     baseValue: 0
     modifiers: 
   strength:
-    statName: 
-    baseValue: 0
-    modifiers: 
-  actionPoints:
-    statName: 
+    statName: Strength
     baseValue: 0
     modifiers: 

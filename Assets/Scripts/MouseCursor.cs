@@ -29,7 +29,7 @@ public class MouseCursor : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		HoveredBlock = FocusOnTile();
+		HoveredBlock = FocusCursorOnBlock();
 		SetCursorPosition();
 	}
 
@@ -39,7 +39,7 @@ public class MouseCursor : MonoBehaviour
 			transform.localPosition = new Vector3(HoveredBlock.WorldPosition.x, 1.525f, HoveredBlock.WorldPosition.z);
 	}
 
-	private GridBlock FocusOnTile()
+	private GridBlock FocusCursorOnBlock()
 	{
 		if (GameUIController.Instance.GameMenus.Any(x => x.IsShown)) return null;
 		if (DiceDungeonUtils.IsMouseOverUI()) return null;

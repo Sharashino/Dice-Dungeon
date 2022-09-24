@@ -8,12 +8,13 @@ public class GridManager : MonoBehaviour
 	private static GridManager _instance;
 	public static GridManager Instance => _instance;
 
-	[Header("Game Map")] [SerializeField] private Vector2Int mapSize;
+	[Header("Game Map")] 
+	[SerializeField] private Vector2Int mapSize;
 	[SerializeField] private GridBlock gridBlockPrefab;
 	[SerializeField] private Transform gridParent;
 	[SerializeField] private Transform itemsParent;
 	[SerializeField] private Transform entitiesParent;
-	
+	[Space]
 	[SerializeField] private Player player;
 	[SerializeField] private List<GridBlock> map = new();
 	[SerializeField] private Sprite[] blockArrows;
@@ -27,7 +28,6 @@ public class GridManager : MonoBehaviour
 	public GridBlock HoveredBlock { get => hoveredBlock; set => hoveredBlock = value; }
 	public Sprite[] BlockArrows => blockArrows;
 	public bool IsPathfinding => isPathfinding;
-	public Player Player => player;
 	
 	private void Awake()
 	{
@@ -81,57 +81,6 @@ public class GridManager : MonoBehaviour
 		player.transform.position = new Vector3(randBlock.WorldPosition.x, 1.5f, randBlock.WorldPosition.z);
 		player.CurrentBlock = randBlock;
 	}
-
-	private List<GridBlock> GetTravelRange()
-	{
-		// Make old blocks invisible
-		ShowHideTravelRange(false);
-
-		blocksInRange =
-			PathFinder.GetBlocksInRange(Player.Instance.CurrentBlock, Player.Instance.TravelRange);
-
-		ShowHideTravelRange(true);
-
-		return blocksInRange;
-	}
-
-	private void ShowHideTravelRange(bool state)
-	{
-		foreach (var block in blocksInRange)
-		{
-			if (block == null) continue;
-			block.ShowHideBlockOverlay(state);
-		}
-	}
-
-	private void SetBlockArrows(Directions direction)
-	{
-		foreach (var block in blocksInRange)
-		{
-			if (block == null) continue;
-			block.SetBlockArrow(direction);
-		}
-	}
-
-	private IEnumerator DrawPathArrows()
-	{
-		while (isPathfinding)
-		{
-			path = PathFinder.FindPath(Player.Instance.CurrentBlock, hoveredBlock, blocksInRange);
-
-			SetBlockArrows(Directions.None);
-
-			for (var i = 0; i < path.Count; i++)
-			{
-				var prev = i > 0 ? path[i - 1] : Player.Instance.CurrentBlock;
-				var future = i < path.Count - 1 ? path[i + 1] : null;
-				var arrowDir = PathTranslator.TranslateDirection(prev, path[i], future);
-				path[i].SetBlockArrow(arrowDir);
-			}
-
-			yield return null;
-		}
-	}
 	
 	public GridBlock GetTile(Vector2Int gridPos)
 	{
@@ -139,30 +88,12 @@ public class GridManager : MonoBehaviour
 
 		return map.FirstOrDefault(x => x.GridPosition == gridPos);
 	}
-
-	public void StartPathfinding()
-	{
-		isPathfinding = true;
-		blocksInRange = GetTravelRange();
-		pathfindingCoroutine = StartCoroutine(DrawPathArrows());
-	}
-
-	public void EndPathfinding()
-	{
-		if (pathfindingCoroutine != null)
-		{
-			StopCoroutine(pathfindingCoroutine);
-			pathfindingCoroutine = null;
-		}
-
-		SetBlockArrows(Directions.None);
-		ShowHideTravelRange(false);
-		isPathfinding = false;
-	}
-
+	
 	public void MovePlayer()
 	{
-		EndPathfinding();
+		if (player.IsMoving) return;
+		
+		path = PathFinder.FindPath(Player.Instance.CurrentBlock, hoveredBlock, map);
 		player.StartCoroutine(player.MovePlayerCoroutine(path));
 	}
 
@@ -171,9 +102,7 @@ public class GridManager : MonoBehaviour
 		// if not in range act as travel button
 		if (player.CurrentBlock != clickedBlock)
 		{
-			blocksInRange = GetTravelRange();
 			path = PathFinder.FindPath(Player.Instance.CurrentBlock, clickedBlock, blocksInRange);
-			Debug.Log(path.Count);
 			MovePlayer();
 		}
 	

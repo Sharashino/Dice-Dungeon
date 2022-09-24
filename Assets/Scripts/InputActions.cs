@@ -8,11 +8,6 @@ public class InputActions : MonoBehaviour
 	public static Action<GridBlock> OnRightBlockClick;
 	public static Action OnExitModes;
 
-	private void Awake()
-	{
-		OnExitModes += () => GridManager.Instance.EndPathfinding();
-	}
-
 	private void Update()
 	{
 		// Left Click

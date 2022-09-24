@@ -5,15 +5,15 @@ using System;
 [Serializable]
 public class Stat
 {
-	[SerializeField] private string statName = default; // Stat name 
-	[SerializeField] private int baseValue = default; // Stat base value 
+	[SerializeField] private string statName; // Stat name 
+	[SerializeField] private float baseValue; // Stat base value 
 
-	public List<int> modifiers = new List<int>(); // List of modifiers to this stat
+	public List<float> modifiers = new(); // List of modifiers to this stat
 
 	public string StatName => statName;
 
 	// Base value = stat modifiers + base value
-	public int BaseValue {
+	public float BaseValue {
 		get
 		{
 			var finalValue = baseValue;
@@ -25,13 +25,13 @@ public class Stat
 	}
 
 	// Add modifier to stat
-	public void AddModifier(int modifier)
+	public void AddModifier(float modifier)
 	{
 		if (modifier != 0) modifiers.Add(modifier);
 	}
 
 	// Remove modifier from stat
-	public void RemoveModifier(int modifier)
+	public void RemoveModifier(float modifier)
 	{
 		if (modifier != 0) modifiers.Remove(modifier);
 	}

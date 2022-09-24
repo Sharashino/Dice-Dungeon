@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
 	private static Player _instance;
 	public static Player Instance => _instance;
@@ -10,23 +10,19 @@ public class Player : MonoBehaviour
 	[SerializeField] private Transform transform;
 	[SerializeField] private GridBlock currentBlock;
 
-	[Header("Player Stats")] 
-	[SerializeField] private int travelRange;
-	[SerializeField] private int pickUpRange;
-
 	[SerializeField] private float speed;
 	[SerializeField] private Inventory inventory;
 	[SerializeField] private Stat health;
+	[SerializeField] private Stat mana;
 	[SerializeField] private Stat armor;
 	[SerializeField] private Stat strength;
-	[SerializeField] private Stat actionPoints;
 	private Coroutine movePlayerCoroutine;
+	private bool isMoving;
 	
 	public GridBlock CurrentBlock { get => currentBlock; set => currentBlock = value; }
 	public Transform Transform { get => transform; set => transform = value; }
 
-	public int TravelRange => travelRange;
-
+	public bool IsMoving => isMoving;
 	
 	private void Awake()
 	{
@@ -38,12 +34,13 @@ public class Player : MonoBehaviour
 	{
 		while (path.Count > 0)
 		{
+			isMoving = true;
+			
 			var step = speed * Time.deltaTime;
-
 			var playerVec = new Vector3(transform.position.x, 1.5f, transform.position.z);
 			var targetVec = new Vector3(path[0].WorldPosition.x, 1.5f, path[0].WorldPosition.z);
 
-			((Component)this).transform.position = Vector3.MoveTowards(playerVec, targetVec, step);
+			transform.position = Vector3.MoveTowards(playerVec, targetVec, step);
 
 			if (Vector3.Distance(transform.position, targetVec) < 0.001f)
 			{
@@ -52,6 +49,7 @@ public class Player : MonoBehaviour
 				path.RemoveAt(0);
 			}
 
+			if (path.Count == 0) isMoving = false;
 			yield return null;
 		}
 	}
@@ -63,5 +61,23 @@ public class Player : MonoBehaviour
 		inventory.AddItem(blockItem.Item);
 		Debug.Log($"Picking up an item...  {blockItem.Item.Name}");
 	}
-	
+
+	public void TakeDamage(float damage)
+	{
+		health.BaseValue -= damage;
+		Debug.Log($"Player took {damage} damage");
+		
+		if(health.BaseValue <= 0) Die();
+	}
+
+	public void Heal(float amount)
+	{
+		health.BaseValue = Mathf.Clamp(health.BaseValue += amount, 0, 100);
+		Debug.Log($"Player healed for {amount} health");
+	}
+
+	public void Die()
+	{
+		Debug.Log("Player died");
+	}
 }

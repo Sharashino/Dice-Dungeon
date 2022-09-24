@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
-using UnityEngine.Events;
 
-public class ActionsMenu : Menu
+public class ActionsController : Menu
 {
 	[SerializeField] private Button actionButtonPrefab;
 	[SerializeField] private Button exitButton;
@@ -77,7 +76,7 @@ public class ActionsMenu : Menu
 	private void OnTravelClick()
 	{
 		ShowHideMenu(false, null);
-		GridManager.Instance.StartPathfinding();
+		//GridManager.Instance.StartPathfinding();
 	}
 
 	private void OnExamineClick(GridBlock clickedBlock)
@@ -94,10 +93,8 @@ public class ActionsMenu : Menu
 	
 	public override void ShowHideMenu(bool state, object obj)
 	{
-		base.ShowHideMenu(state, obj);
-
 		if (obj as GridBlock == null) return;
-		ShowHideActionsMenu(state, (GridBlock)obj);
+		//ShowHideActionsMenu(state, (GridBlock)obj);
 	}
 }
 
