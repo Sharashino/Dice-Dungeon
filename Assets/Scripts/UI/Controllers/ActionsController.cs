@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
@@ -9,8 +8,6 @@ public class ActionsController : Menu
 	[SerializeField] private Button exitButton;
 
 	[SerializeField] private Transform actionButtonsParent;
-
-	[SerializeField] private List<Button> actionButtons = new List<Button>();
 
 	private Camera mainCamera;
 

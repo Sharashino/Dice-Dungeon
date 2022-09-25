@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -17,6 +16,9 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private Stat mana;
 	[SerializeField] private Stat armor;
 	[SerializeField] private Stat strength;
+	[SerializeField] private Stat intelligence;
+	[SerializeField] private Stat agility;
+	[SerializeField] private Stat luck;
 	private Coroutine movePlayerCoroutine;
 	private bool isMoving;
 	
@@ -60,32 +62,43 @@ public class Player : MonoBehaviour, IDamageable
 		}
 	}
 
-	public void PickUpItem(BlockItem blockItem)
+	public void PickUpItem(Item item)
 	{
-		if(blockItem == null) return;
+		if(item == null) return;
 		
-		inventory.AddItem(blockItem.Item);
-		Debug.Log($"Picking up an item...  {blockItem.Item.Name}");
+		inventory.AddItem(item);
+		
+		ChatLog.LogPickup(item);
 	}
 
-	public void TakeDamage(float damage)
+	public void TakeDamage(float amount)
 	{
-		health.BaseValue -= damage;
+		health.BaseValue -= amount;
 		HealthBar.OnHealthChanged.Invoke(health.BaseValue);
-		if(health.BaseValue <= 0) Die();
+
+		if (health.BaseValue <= 0)
+		{
+			Die();
+			return;
+		}
 		
-		Debug.Log($"<color=red>Taken {damage} damage</color>");
+		ChatLog.LogDamage((int)amount);
 	}
 
 	public void Heal(float amount)
 	{
 		health.BaseValue = Mathf.Clamp(health.BaseValue += amount, 0, 100);
 		HealthBar.OnHealthChanged.Invoke(health.BaseValue);
-		Debug.Log($"<color=green>Healed {amount} health</color>");
+		
+		ChatLog.LogHeal((int)amount);
 	}
 
 	public void Die()
 	{
-		Debug.Log("Player died");
+		// TODO Add death animation
+		// TODO Add death screen
+		// TODO Add death sound
+		
+		ChatLog.LogDeath();
 	}
 }

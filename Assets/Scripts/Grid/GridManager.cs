@@ -36,6 +36,7 @@ public class GridManager : MonoBehaviour
 	{
 		GenerateMap();
 		SpawnPlayer();
+		ChatLog.LogGameStart();
 	}
 
 	private void GenerateMap()
@@ -105,7 +106,7 @@ public class GridManager : MonoBehaviour
 		}
 	
 		// pick up item and remove it from map
-		player.PickUpItem(clickedBlock.BlockItem);
+		player.PickUpItem(clickedBlock.BlockItem.Item);
 		clickedBlock.RemoveBlockItem();
 	}
 }
