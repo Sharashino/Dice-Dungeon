@@ -18,7 +18,6 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Player player;
 	[SerializeField] private List<GridBlock> map = new();
 	[SerializeField] private Sprite[] blockArrows;
-	private List<GridBlock> blocksInRange = new();
 	private List<GridBlock> path = new();
 	private GridBlock hoveredBlock;
 	private bool isPathfinding;
@@ -27,7 +26,6 @@ public class GridManager : MonoBehaviour
 
 	public GridBlock HoveredBlock { get => hoveredBlock; set => hoveredBlock = value; }
 	public Sprite[] BlockArrows => blockArrows;
-	public bool IsPathfinding => isPathfinding;
 	
 	private void Awake()
 	{
@@ -58,11 +56,11 @@ public class GridManager : MonoBehaviour
 			gridBlock.ShowHideBlockArrow(false);
 			map.Add(gridBlock);
 
-			RandomItemSpawn(gridBlock);
+			SpawnRandomItem(gridBlock);
 		}
 	}
 
-	private void RandomItemSpawn(GridBlock gridBlock)
+	private void SpawnRandomItem(GridBlock gridBlock)
 	{
 		var random = Random.Range(0, 101);
 		if (random > 75)
@@ -82,7 +80,7 @@ public class GridManager : MonoBehaviour
 		player.CurrentBlock = randBlock;
 	}
 	
-	public GridBlock GetTile(Vector2Int gridPos)
+	public GridBlock GetGridBlock(Vector2Int gridPos)
 	{
 		if (gridPos.x < 0 || gridPos.y < 0) return null;
 
@@ -102,7 +100,7 @@ public class GridManager : MonoBehaviour
 		// if not in range act as travel button
 		if (player.CurrentBlock != clickedBlock)
 		{
-			path = PathFinder.FindPath(Player.Instance.CurrentBlock, clickedBlock, blocksInRange);
+			path = PathFinder.FindPath(Player.Instance.CurrentBlock, clickedBlock, map);
 			MovePlayer();
 		}
 	

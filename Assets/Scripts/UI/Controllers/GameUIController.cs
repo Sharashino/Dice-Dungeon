@@ -7,8 +7,7 @@ public class GameUIController : MonoBehaviour
 {
 	public static GameUIController Instance;
 
-	[SerializeField] private CanvasGroup mainUI;
-	[SerializeField] private List<Menu> gameMenus = new List<Menu>();
+	[SerializeField] private List<Menu> gameMenus = new();
 	[SerializeField] private GraphicRaycaster menusRaycaster;
 
 	[Header("Controllers")]    
@@ -52,8 +51,6 @@ public class GameUIController : MonoBehaviour
 
 	private void ShowActionsMenu(GridBlock block)
 	{
-		if (GridManager.Instance.IsPathfinding) return;
-
 		if (block == null) actionsController.ShowHideMenu(false, null);
 		else actionsController.ShowHideMenu(true, block);
 	}

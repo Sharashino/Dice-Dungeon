@@ -11,7 +11,7 @@ public class Menu : MonoBehaviour
 		if(menuCanvasGroup == null) menuCanvasGroup = GetComponent<CanvasGroup>();
 	}
 
-	public virtual void ShowHideMenu(bool state, object obj)
+	public virtual void ShowHideMenu(bool state, GridBlock gridBlock)
 	{
 		if (state) menuCanvasGroup.Enable();
 		else menuCanvasGroup.Disable();

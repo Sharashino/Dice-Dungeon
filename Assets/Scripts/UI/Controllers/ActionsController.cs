@@ -18,24 +18,8 @@ public class ActionsController : Menu
 	{
 		mainCamera = Camera.main;
 
-		exitButton.onClick.AddListener(() => ShowHideActionsMenu(false, null));
-		ShowHideActionsMenu(false, null);
-	}
-
-	private void ShowHideActionsMenu(bool state, GridBlock relativeBlock)
-	{
-		if (state)
-		{
-			GetActionMenuSize(relativeBlock);
-			var point = mainCamera.WorldToScreenPoint(relativeBlock.transform.position);
-			transform.position = new Vector3(point.x + 60, point.y - 30, point.z);
-
-			menuCanvasGroup.Enable();
-		}
-		else
-		{
-			menuCanvasGroup.Disable();
-		}
+		exitButton.onClick.AddListener(() => ShowHideMenu(false, null));
+		ShowHideMenu(false, null);
 	}
 
 	private void GetActionMenuSize(GridBlock clickedBlock)
@@ -76,7 +60,7 @@ public class ActionsController : Menu
 	private void OnTravelClick()
 	{
 		ShowHideMenu(false, null);
-		//GridManager.Instance.StartPathfinding();
+		GridManager.Instance.MovePlayer();
 	}
 
 	private void OnExamineClick(GridBlock clickedBlock)
@@ -91,10 +75,20 @@ public class ActionsController : Menu
 		ShowHideMenu(false, null);
 	}
 	
-	public override void ShowHideMenu(bool state, object obj)
+	public override void ShowHideMenu(bool state, GridBlock clickedBlock)
 	{
-		if (obj as GridBlock == null) return;
-		//ShowHideActionsMenu(state, (GridBlock)obj);
+		if (state && clickedBlock != null)
+		{
+			GetActionMenuSize(clickedBlock);
+			var point = mainCamera.WorldToScreenPoint(clickedBlock.transform.position);
+			transform.position = new Vector3(point.x + 60, point.y - 30, point.z);
+
+			menuCanvasGroup.Enable();
+		}
+		else
+		{
+			menuCanvasGroup.Disable();
+		}
 	}
 }
 

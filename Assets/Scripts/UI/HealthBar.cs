@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class HealthBar : Bar
 {
-	public override void UpdateBar(float value)
+	public static Action<float> OnHealthChanged;
+
+	private void Awake()
 	{
-		base.UpdateBar(value);
-		SetHealthBar(maxValue);
+		OnHealthChanged += UpdateHealth;
 	}
-	
-	public void SetHealthBar(float value)
+
+	private void UpdateHealth(float value)
 	{
-		barSlider.value = Mathf.Clamp(barSlider.value, value, maxValue);
+		// TODO Add health bar smoothness
+		barSlider.value = Mathf.Clamp(value, 0, maxValue);
 	}
 }

@@ -90,10 +90,10 @@ public static class PathFinder
 
 		var neighbours = new List<GridBlock>
 		{
-			grid.GetTile(new Vector2Int(currentBlock.GridPosition.x + 1, currentBlock.GridPosition.y)),
-			grid.GetTile(new Vector2Int(currentBlock.GridPosition.x - 1, currentBlock.GridPosition.y)),
-			grid.GetTile(new Vector2Int(currentBlock.GridPosition.x, currentBlock.GridPosition.y + 1)),
-			grid.GetTile(new Vector2Int(currentBlock.GridPosition.x, currentBlock.GridPosition.y - 1))
+			grid.GetGridBlock(new Vector2Int(currentBlock.GridPosition.x + 1, currentBlock.GridPosition.y)),
+			grid.GetGridBlock(new Vector2Int(currentBlock.GridPosition.x - 1, currentBlock.GridPosition.y)),
+			grid.GetGridBlock(new Vector2Int(currentBlock.GridPosition.x, currentBlock.GridPosition.y + 1)),
+			grid.GetGridBlock(new Vector2Int(currentBlock.GridPosition.x, currentBlock.GridPosition.y - 1))
 		};
 
 		return neighbours;

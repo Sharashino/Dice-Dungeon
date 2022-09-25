@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -20,7 +21,6 @@ public class Player : MonoBehaviour, IDamageable
 	private bool isMoving;
 	
 	public GridBlock CurrentBlock { get => currentBlock; set => currentBlock = value; }
-	public Transform Transform { get => transform; set => transform = value; }
 
 	public bool IsMoving => isMoving;
 	
@@ -29,7 +29,13 @@ public class Player : MonoBehaviour, IDamageable
 		if (_instance == null) _instance = this;
 		inventory = new Inventory(10);
 	}
-	
+
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.H)) TakeDamage(10);
+		if (Input.GetKeyDown(KeyCode.J)) Heal(10);
+	}
+
 	public IEnumerator MovePlayerCoroutine(List<GridBlock> path)
 	{
 		while (path.Count > 0)
@@ -65,15 +71,17 @@ public class Player : MonoBehaviour, IDamageable
 	public void TakeDamage(float damage)
 	{
 		health.BaseValue -= damage;
-		Debug.Log($"Player took {damage} damage");
-		
+		HealthBar.OnHealthChanged.Invoke(health.BaseValue);
 		if(health.BaseValue <= 0) Die();
+		
+		Debug.Log($"<color=red>Taken {damage} damage</color>");
 	}
 
 	public void Heal(float amount)
 	{
 		health.BaseValue = Mathf.Clamp(health.BaseValue += amount, 0, 100);
-		Debug.Log($"Player healed for {amount} health");
+		HealthBar.OnHealthChanged.Invoke(health.BaseValue);
+		Debug.Log($"<color=green>Healed {amount} health</color>");
 	}
 
 	public void Die()
