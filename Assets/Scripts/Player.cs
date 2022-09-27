@@ -24,6 +24,14 @@ public class Player : MonoBehaviour, IDamageable
 	
 	public GridBlock CurrentBlock { get => currentBlock; set => currentBlock = value; }
 
+	public Stat Health => health;
+	public Stat Mana => mana;
+	public Stat Armor => armor;
+	public Stat Strength => strength;
+	public Stat Intelligence => intelligence;
+	public Stat Agility => agility;
+	public Stat Luck => luck;
+	
 	public bool IsMoving => isMoving;
 	
 	private void Awake()

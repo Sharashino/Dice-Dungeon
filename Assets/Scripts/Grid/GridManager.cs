@@ -15,7 +15,6 @@ public class GridManager : MonoBehaviour
 	[SerializeField] private Transform itemsParent;
 	[SerializeField] private Transform entitiesParent;
 	[Space]
-	[SerializeField] private Player player;
 	[SerializeField] private List<GridBlock> map = new();
 	[SerializeField] private Sprite[] blockArrows;
 	private List<GridBlock> path = new();
@@ -26,6 +25,7 @@ public class GridManager : MonoBehaviour
 
 	public GridBlock HoveredBlock { get => hoveredBlock; set => hoveredBlock = value; }
 	public Sprite[] BlockArrows => blockArrows;
+	public Transform EntitiesParent => entitiesParent;
 	
 	private void Awake()
 	{
@@ -74,11 +74,7 @@ public class GridManager : MonoBehaviour
 
 	private void SpawnPlayer()
 	{
-		var randBlock = map[Random.Range(0, map.Count)];
-		player = Instantiate(GameManager.Instance.PlayerPrefab, entitiesParent);
-		
-		player.transform.position = new Vector3(randBlock.WorldPosition.x, 1.5f, randBlock.WorldPosition.z);
-		player.CurrentBlock = randBlock;
+		PlayerManager.Instance.SpawnPlayer(map[Random.Range(0, map.Count)]);
 	}
 	
 	public GridBlock GetGridBlock(Vector2Int gridPos)
@@ -90,23 +86,23 @@ public class GridManager : MonoBehaviour
 	
 	public void MovePlayer()
 	{
-		if (player.IsMoving) return;
+		if (Player.Instance.IsMoving) return;
 		
 		path = PathFinder.FindPath(Player.Instance.CurrentBlock, hoveredBlock, map);
-		player.StartCoroutine(player.MovePlayerCoroutine(path));
+		Player.Instance.StartCoroutine(Player.Instance.MovePlayerCoroutine(path));
 	}
 
 	public void PickUpItem(GridBlock clickedBlock)
 	{
 		// if not in range act as travel button
-		if (player.CurrentBlock != clickedBlock)
+		if (Player.Instance.CurrentBlock != clickedBlock)
 		{
 			path = PathFinder.FindPath(Player.Instance.CurrentBlock, clickedBlock, map);
 			MovePlayer();
 		}
 	
 		// pick up item and remove it from map
-		player.PickUpItem(clickedBlock.BlockItem.Item);
+		Player.Instance.PickUpItem(clickedBlock.BlockItem.Item);
 		clickedBlock.RemoveBlockItem();
 	}
 }

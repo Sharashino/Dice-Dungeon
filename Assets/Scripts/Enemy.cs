@@ -14,6 +14,5 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Stat agility;
     [SerializeField] private Stat luck;
 
-
     public string EnemyName => enemyName;
 }

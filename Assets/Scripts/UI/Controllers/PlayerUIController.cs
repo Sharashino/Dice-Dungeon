@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerUIController : Menu
 {
-    
     [SerializeField] private Button[] quickSlotButtons;
     [SerializeField] private Button inventoryButton;
     [SerializeField] private Button statsButton;

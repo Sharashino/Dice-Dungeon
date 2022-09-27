@@ -39,14 +39,14 @@ public class GameUIController : MonoBehaviour
 
 	private void ShowHideInventoryMenu()
 	{
-		CascadeHideMenus();
 		inventoryController.ShowHideMenu(!inventoryController.IsShown);
+		HideOtherMenus(inventoryController);
 	}
 
 	private void ShowHideStatsMenu()
 	{
-		CascadeHideMenus();
 		statsController.ShowHideMenu(!statsController.IsShown);
+		HideOtherMenus(statsController);
 	}
 
 	private void ShowActionsMenu(GridBlock block)
@@ -59,5 +59,13 @@ public class GameUIController : MonoBehaviour
 	{
 		var firstShown = gameMenus.FirstOrDefault(x => x.IsShown);
 		if (firstShown != null) firstShown.ShowHideMenu(false);
+	}
+
+	private void HideOtherMenus(Menu menu)
+	{
+		foreach (var gameMenu in gameMenus.Where(x => x.IsShown))
+		{
+			if (gameMenu != menu) gameMenu.ShowHideMenu(false);
+		}
 	}
 }

@@ -34,7 +34,7 @@ public static class ChatLog
         var message = $"Picked up {item.name}.";
         GameLogController.Instance.SpawnLogMessage(message, Color.white);
     }
-
+    
     public static void LogHit(int amount, Enemy enemy)
     {
         var message = $"You hit {enemy.EnemyName} for {amount} damage.";
@@ -52,7 +52,51 @@ public static class ChatLog
         var message = $"You took {amount} damage.";
         GameLogController.Instance.SpawnLogMessage(message, Color.white);
     }
+
+    // STATUS EFFECTS
+    public static void LogPoisoned()
+    {
+        var message = "You have been poisoned.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.green);
+    }
     
+    public static void LogBleeding()
+    {
+        var message = "You are bleeding.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.red);
+    }
+
+    public static void LogCrippled()
+    {
+        var message = "You are crippled.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.red);
+    }
+    
+    public static void LogBlinded()
+    {
+        var message = "You are blinded.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.white);
+    }
+    
+    public static void LogSetOnFire()
+    {
+        var message = "You are on fire.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.red);
+    }
+    
+    public static void LogFrozen()
+    {
+        var message = "You are frozen.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.blue);
+    }
+    
+    public static void LogStunned()
+    {
+        var message = "You are stunned.";
+        GameLogController.Instance.SpawnLogMessage(message, Color.magenta);
+    }
+    
+    // GAME START
     public static void LogDeath()
     {
         var message = "You died.";

@@ -2,6 +2,8 @@
 {
 	Poison,
 	Bleed,
+	Cripple,
+	Blind,
 	Fire,
 	Freeze,
 	Stun
